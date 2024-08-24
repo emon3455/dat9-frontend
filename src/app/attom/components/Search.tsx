@@ -9,9 +9,9 @@ const Search: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const resultRef = useRef<HTMLDivElement>(null);
-
+  
   // Load Google Maps API
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -38,6 +38,7 @@ const Search: React.FC = () => {
   }, [isLoaded]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://atom-backend-oc3i.onrender.com/property/filter?searchText=${inputValue}`
@@ -48,7 +49,9 @@ const Search: React.FC = () => {
       const result = await response.json();
       setData(result);
     } catch (error: any) {
+      console.error("Error fetching data:", error);
       setError(true);
+      setData(null);
     } finally {
       setLoading(false);
       if (resultRef.current) {
@@ -66,13 +69,14 @@ const Search: React.FC = () => {
       setError(true);
     } else {
       setError(false);
-      fetchData();
+      fetchData();  // API call only happens here
     }
   };
 
   const handleClearClick = () => {
     setInputValue("");
     setError(false);
+    setData(null); // Clear the data when clearing the input
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -82,11 +86,19 @@ const Search: React.FC = () => {
     }
   };
 
+  // Prevent form submission when Enter is pressed in the input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevents form submission
+    }
+  };
+
   const gradientStyle: React.CSSProperties = {
     background: `url('https://i.ibb.co/f1mHZfM/15578.jpg'), linear-gradient(to top, rgba(0, 0, 0, 0.849), rgba(0, 0, 0, 0))`,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
     backgroundPosition: "bottom",
+    
   };
 
   return (
@@ -110,6 +122,7 @@ const Search: React.FC = () => {
                   type="text"
                   value={inputValue}
                   onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
                   placeholder="EX: 4707 Hickory PL, Cheyenne, WY 82009"
                   ref={searchInputRef}
                   className="w-full border rounded-md px-5"
@@ -155,8 +168,11 @@ const Search: React.FC = () => {
           </form>
         </div>
       </div>
+      <style>
+      
+      </style>
       <div ref={resultRef} className="container mx-auto p-4">
-        <Card data={data} />
+        <Card data={data} loading={loading} />
       </div>
     </div>
   );

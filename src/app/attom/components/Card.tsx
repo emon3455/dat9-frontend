@@ -11,15 +11,17 @@ interface PropertyData {
 }
 
 interface CardProps {
-    data: PropertyData[];
+    data: PropertyData[] | undefined;
+    loading: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ data }) => {
-    if (!data) {
+const Card: React.FC<CardProps> = ({ data, loading }) => {
+    console.log(data)
+    if (loading) {
         return <Loading />;
     }
 
-    if (!data.length) {
+    if (!data || data.length === 0) {
         return (
             <div className="w-128 h-60 rounded shadow-md flex justify-center text-xl card text-grey-darkest p-4">
                 No data available
@@ -27,7 +29,7 @@ const Card: React.FC<CardProps> = ({ data }) => {
         );
     }
 
-    const property = data[0]; // Access the first item safely
+    const property = data[0];
 
     return (
         <>
