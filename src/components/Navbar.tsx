@@ -46,10 +46,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex justify-center absolute z-50 m-4 top-0 left-0 right-0 rounded-xl items-center p-4 bg-white">
+    <nav className="flex justify-around gap-10 absolute z-50 m-4 top-0 left-0 right-0 rounded-xl items-center p-4 bg-white">
 
-      <div className="flex items-center space-x-2">
-        <p className="font-semibold text-xl">Dat9</p>
+      <div className="lg:flex lg:justify-around hidden lg:w-2/5 gap-2">
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Buy</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Sell</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Home Load</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Find Agent</span>
+      </div>
+      <div className="flex justify-center items-center space-x-2 lg:w-1/5">
+        <p className="font-bold text-2xl">Dat9</p>
         <Image
           src={logo}
           alt="Description of the image"
@@ -57,6 +63,13 @@ const Navbar = () => {
           height={50}
         />
       </div>
+      <div className="lg:flex lg:justify-around hidden lg:w-2/5 gap-2">
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Manage Rental</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Advertise</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Help</span>
+          <span className="text-black hover:text-primary transition-all duration-500 cursor-pointer font-bold">Sign In</span>
+      </div>
+
     </nav>
   );
 };

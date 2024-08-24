@@ -75,6 +75,7 @@ const Search: React.FC = () => {
   const handleClearClick = () => {
     setInputValue("");
     setError(false);
+    setData([])
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
