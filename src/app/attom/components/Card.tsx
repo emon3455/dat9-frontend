@@ -15,9 +15,6 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ data }) => {
-    if (!data) {
-        return <Loading />;
-    }
 
     if (!data.length) {
         return (
