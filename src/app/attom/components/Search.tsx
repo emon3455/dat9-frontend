@@ -1,32 +1,26 @@
 "use client";
 import React, { useState, FormEvent, ChangeEvent, useRef, useEffect } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
-import { useGetPropertyQuery } from "@/Redux/Features/property/Property-api-slice";
 import Card from "./Card";
-import Loading from "@/app/loading";
 
 const libraries: ("places")[] = ["places"];
 
 const Search: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
   // Load Google Maps API
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyBC9ytu3b3UnI1x1BTW_c1mIUU_TxXEmYA",
+    googleMapsApiKey: "AIzaSyBC9ytu3b3UnI1x1BTW_c1mIUU_TxXEmYA", // Replace with your API key
     libraries,
   });
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const [triggerFetch, setTriggerFetch] = useState(false);
-
-  const { data, error: apiError, isLoading } = useGetPropertyQuery(inputValue, {
-    skip: !triggerFetch,
-  });
 
   useEffect(() => {
     if (isLoaded && searchInputRef.current) {
@@ -43,20 +37,44 @@ const Search: React.FC = () => {
     }
   }, [isLoaded]);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://atom-backend-oc3i.onrender.com/property/filter?searchText=${inputValue}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const result = await response.json();
+      setData(result);
+      handleClearClick();
+    } catch (error: any) {
+      setError(true);
+    } finally {
+      setLoading(false);
+      if (resultRef.current) {
+        window.scrollTo({
+          top: resultRef.current.offsetTop,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
   const handleGoClick = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim() === "") {
       setError(true);
     } else {
       setError(false);
-      setTriggerFetch(true);
+      fetchData();
     }
   };
 
   const handleClearClick = () => {
     setInputValue("");
     setError(false);
-    setTriggerFetch(false);
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,8 +90,6 @@ const Search: React.FC = () => {
     backgroundBlendMode: "overlay",
     backgroundPosition: "bottom",
   };
-
-  if(isLoading) return <Loading/>
 
   return (
     <div>
@@ -142,10 +158,7 @@ const Search: React.FC = () => {
         </div>
       </div>
       <div ref={resultRef} className="container mx-auto p-4">
-        {apiError && <p>Error: {JSON.stringify(apiError)}</p>}
-        {
-          data?.length > 0 && <Card data={data} />
-        }
+        {data?.length > 0 && <Card data={data} loading={loading} />}
       </div>
     </div>
   );

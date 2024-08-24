@@ -12,11 +12,14 @@ interface PropertyData {
 
 interface CardProps {
     data: PropertyData[];
+    loading: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ data }) => {
+const Card: React.FC<CardProps> = ({ data, loading }) => {
 
-    if (!data.length) {
+  if(loading) return <Loading />
+
+    if (data.length===0) {
         return (
             <div className="w-128 h-60 rounded shadow-md flex justify-center text-xl card text-grey-darkest p-4">
                 No data available
