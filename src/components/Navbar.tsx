@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import getUser from "@/hooks/useAuth";
 import { removeDataInCookies } from "@/Global/(cockies)/setCoockies";
+import Image from "next/image";
+import logo from "../../public/dat9.webp"
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
@@ -27,9 +29,9 @@ const Navbar = () => {
     try {
       removeDataInCookies();
       if (path.includes("/admin") || path.includes("/customer")) {
-        window.location.href=`/login?redirectUrl=${path}`;
-      }else{
-        window.location.href=`${path}`;
+        window.location.href = `/login?redirectUrl=${path}`;
+      } else {
+        window.location.href = `${path}`;
       }
       cToastify({
         type: "success",
@@ -44,20 +46,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex justify-between p-4 bg-cyan-950 text-white">
-      <h2 className="">navbar</h2>
-      <div className="flex space-x-2">
-        <Link href="/">Home</Link>
-        <Link href="/admin">Admin</Link>
-        <Link href="/customer">Customer</Link>
-        <Link href="/test">Test</Link>
-        {
-          user?.role 
-          ? 
-          <p onClick={handleLogout}>{"Logout"}</p> 
-          : 
-          <Link href="/login">{"Login"}</Link>
-        }
+    <nav className="flex justify-center absolute z-50 m-4 top-0 left-0 right-0 rounded-xl items-center p-4 bg-white">
+
+      <div className="flex items-center space-x-2">
+        <p className="font-semibold text-xl">Dat9</p>
+        <Image
+          src={logo}
+          alt="Description of the image"
+          width={50}
+          height={50}
+        />
       </div>
     </nav>
   );
